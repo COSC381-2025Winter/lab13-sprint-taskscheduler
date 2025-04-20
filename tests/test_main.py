@@ -8,7 +8,9 @@ import main
 from scheduler import calendar_api
 
 
-
+@pytest.fixture(autouse=True)
+def disable_webbrowser_open(monkeypatch):
+    monkeypatch.setattr("webbrowser.open", lambda *args, **kwargs: True)
 
 
 @pytest.fixture
