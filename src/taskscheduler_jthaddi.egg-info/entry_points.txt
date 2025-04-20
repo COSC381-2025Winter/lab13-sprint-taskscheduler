@@ -1,0 +1,2 @@
+[console_scripts]
+taskscheduler = taskscheduler_Jthaddi.main:main
