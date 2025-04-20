@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "taskscheduler-jthaddi"
+version = "0.1.0"
+description = "A task scheduler using Google Calendar API"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "google-auth",
+    "google-auth-oauthlib",
+    "google-auth-httplib2",
+    "google-api-python-client"
+]
+
+[project.scripts]
+taskscheduler = "taskscheduler_Jthaddi.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
