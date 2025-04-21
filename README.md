@@ -33,4 +33,17 @@ This project was developed as part of the **COSC381 Final Lab** at Eastern Michi
 
 ```bash
 git clone https://github.com/COSC381-2025Winter/lab13-sprint-taskscheduler.git
-cd lab13-sprint-taskscheduler
+cd lab13-sprint-taskscheduler 
+
+### 2. Set up Environment
+pip install -r requirements
+
+### 3.
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+### 4. Run the program
+python3 .\src\taskscheduler_mhussei9\main.py         
+
+
+
