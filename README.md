@@ -30,20 +30,33 @@ This project was developed as part of the **COSC381 Final Lab** at Eastern Michi
 ## 🛠️ Setup Instructions
 
 ### 1. Clone the Repository
-
 ```bash
 git clone https://github.com/COSC381-2025Winter/lab13-sprint-taskscheduler.git
-cd lab13-sprint-taskscheduler 
-
-### 2. Set up Environment
-pip install -r requirements
-
-### 3.
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-### 4. Run the program
-python3 .\src\taskscheduler_mhussei9\main.py         
-
-
-
+cd lab13-sprint-taskscheduler
+```
+### 2. Set Up Virtual Environment
+```bash
+python -m venv .venv
+source .venv/bin/activate # On Windows: .venv\Scripts\activate
+```
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 4. Set Up Google Calendar API (if applicable)
+- If you're using the Google Calendar API, make sure you have the `credentials.json` file from
+the Google Developer Console.
+- Place it in the root directory of the project.
+### 5. Environment Variables
+- Add any environment variables needed, such as your API keys, to a `.env` file. For example:
+```bash
+GOOGLE_API_KEY= - your_google_api_key - 
+CALENDAR_ID= - your_calendar_id -
+```
+### 6. Run Tests (Optional but Recommended)
+```bash
+pytest # Run all tests to verify your setup
+```
+### 7. Run the Program
+```bash
+python src/taskscheduler_mhussei9/main.py
