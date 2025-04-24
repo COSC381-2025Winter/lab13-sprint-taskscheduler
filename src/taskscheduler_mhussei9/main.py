@@ -1,91 +1,96 @@
 import logging
 from datetime import datetime
-from scheduler import calendar_api  # ✅ using module-level import for mocking
-
-# Set up basic logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+from scheduler import calendar_api 
 
 def main():
-    while True:
-        print("\n📅 Task Scheduler Menu")
+    userInput = ""
+    while userInput != "4":
+        print("\n---Calendar App---")
         print("1. Add Event")
         print("2. Delete Event")
         print("3. View Events")
         print("4. Exit")
-
-        choice = input("Choose an option (1-4): ").strip()
-
-        if choice == "1":
-            try:
-                # Get event details from the user
-                summary = input("Enter event title: ").strip()
-                year = input("Enter year (e.g. 2025): ").strip()
-                month = input("Enter month (e.g. 04): ").strip()
-                day = input("Enter day (e.g. 25): ").strip()
-
-                # Validate date
+        userInput = input("Choose From The Following Options: ")
+        
+        match userInput:
+            case "1":
+                print("=== Add Event ===")
+                summary = input("Enter event title: ")
+                
+                # Ask for date components separately
+                year = input("Enter year (e.g., 2025): ")
+                month = input("Enter month (1-12): ")
+                day = input("Enter day (1-31): ")
+                
+                # Format month and day to ensure two digits
+                month = month.zfill(2)  # Adds leading zero if needed
+                day = day.zfill(2)      # Adds leading zero if needed
+                
+                # Ask for start and end times directly
+                start_time = input("Enter start time (HH:MM, e.g., 10:00): ")
+                end_time = input("Enter end time (HH:MM, e.g., 11:00): ")
+                
+                # Ensure proper time format
+                if ":" not in start_time:
+                    start_time = f"{start_time}:00"
+                if ":" not in end_time:
+                    end_time = f"{end_time}:00"
+                
+                # Construct ISO format datetime strings
+                date = f"{year}-{month}-{day}"
+                start_datetime = f"{date}T{start_time}:00"
+                end_datetime = f"{date}T{end_time}:00"
+                
                 try:
-                    datetime.strptime(f"{year}-{month}-{day}", "%Y-%m-%d")
-                except ValueError:
-                    print("❌ Invalid date format. Please use YYYY-MM-DD.")
-                    continue
-
-                start = input("Enter start time (HH:MM 24-hour format): ").strip()
-                end = input("Enter end time (HH:MM 24-hour format): ").strip()
-
-                # Validate time format
-                try:
-                    datetime.strptime(start, "%H:%M")
-                    datetime.strptime(end, "%H:%M")
-                except ValueError:
-                    print("❌ Invalid time format. Please use HH:MM.")
-                    continue
-
-                # Format start and end times
-                start_time = f"{year}-{month.zfill(2)}-{day.zfill(2)}T{start}:00"
-                end_time = f"{year}-{month.zfill(2)}-{day.zfill(2)}T{end}:00"
-
-                # Add event to calendar
-                event = calendar_api.add_event(summary, start_time, end_time)
-                logging.info(f"Event created: {event.get('id')}")
-                print(f"✅ Event created: {event.get('id')}")
-            except Exception as e:
-                logging.error(f"Failed to add event: {e}")
-                print(f"❌ Failed to add event: {e}")
-
-        elif choice == "2":
-            try:
-                event_id = input("Enter event ID to delete: ")
-                if not event_id:
-                    print("❌ Invalid event ID. Please enter a valid ID.")
-                    continue
-
-                calendar_api.delete_event(event_id)
-                logging.info(f"Event {event_id} deleted.")
-                print("🗑️ Event deleted.")
-            except Exception as e:
-                logging.error(f"Failed to delete event: {e}")
-                print(f"❌ Failed to delete event: {e}")
-
-        elif choice == "3":
-            try:
+                    event = calendar_api.add_event(summary, start_datetime, end_datetime)
+                    print(f"Event '{summary}' created successfully for {date} from {start_time} to {end_time}")
+                except ValueError as e:
+                    print(f"Error with date/time format: {e}")
+                    print("Please ensure you're using valid date and time values.")
+                except Exception as e:
+                    print(f"Failed to create event: {e}")
+                
+            case "2":
+                print("=== Delete Event ===")
                 events = calendar_api.fetch_upcoming_events()
+                
                 if not events:
                     print("No upcoming events found.")
-                for event in events:
-                    start = event["start"].get("dateTime", event["start"].get("date"))
-                    start = datetime.fromisoformat(start).strftime("%Y-%m-%d %H:%M")
-                    summary = event.get("summary", "No Title")
-                    print(f"{event['id']} | {start} | {summary}")
-            except Exception as e:
-                logging.error(f"Failed to fetch events: {e}")
-                print(f"❌ Failed to fetch events: {e}")
-
-        elif choice == "4":
-            print("👋 Exiting...")
-            break
-        else:
-            print("❌ Invalid option. Try again.")
+                else:
+                    print("Upcoming events:")
+                    for i, event in enumerate(events, 1):
+                        start = event['start'].get('dateTime', event['start'].get('date'))
+                        print(f"{i}. {event['summary']} ({start})")
+                    
+                    event_index = int(input("Enter the number of the event to delete (0 to cancel): ")) - 1
+                    if 0 <= event_index < len(events):
+                        try:
+                            calendar_api.delete_event(events[event_index]['id'])
+                            print("Event deleted successfully.")
+                        except Exception as e:
+                            print(f"Failed to delete event: {e}")
+                    elif event_index == -1:
+                        print("Operation cancelled.")
+                    else:
+                        print("Invalid event number.")
+                
+            case "3":
+                print("=== View Events ===")
+                events = calendar_api.fetch_upcoming_events()
+                
+                if not events:
+                    print("No upcoming events found.")
+                else:
+                    print("Upcoming events:")
+                    for i, event in enumerate(events, 1):
+                        start = event['start'].get('dateTime', event['start'].get('date'))
+                        print(f"{i}. {event['summary']} ({start})")
+                        
+            case "4":
+                print("Goodbye!")
+                
+            case _:
+                print("Invalid Choice")
 
 if __name__ == "__main__":
     main()
